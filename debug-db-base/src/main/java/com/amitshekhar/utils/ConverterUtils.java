@@ -19,6 +19,9 @@
 
 package com.amitshekhar.utils;
 
+import java.util.Arrays;
+import java.util.Locale;
+
 /**
  * Created by amitshekhar on 06/02/17.
  */
@@ -43,7 +46,7 @@ public class ConverterUtils {
 //                }
 //            }
 //        }
-        return encodeHex(blob);
+        return "hex(" + encodeHex(blob) + ")";
     }
 
     public static boolean fastIsAscii(byte[] blob) {
@@ -63,6 +66,18 @@ public class ConverterUtils {
             hexChars[i * 2 + 1] = HEX_ARRAY[v & 0x0F];
         }
         return new String(hexChars);
+    }
+
+    public static byte[] decodeHex(String hexString) {
+        if ((hexString.length() & 0x01) != 0) {
+            throw new IllegalArgumentException("Odd number of characters.");
+        }
+        char[] hexChars = hexString.toUpperCase(Locale.ROOT).toCharArray();
+        byte[] result = new byte[hexChars.length / 2];
+        for (int i = 0; i < hexChars.length; i += 2) {
+            result[i / 2] = (byte) (Arrays.binarySearch(HEX_ARRAY, hexChars[i]) * 16 + Arrays.binarySearch(HEX_ARRAY, hexChars[i + 1]));
+        }
+        return result;
     }
 
 }

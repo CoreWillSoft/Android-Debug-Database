@@ -315,7 +315,18 @@ public class DatabaseHelper {
                         contentValues.put(rowDataRequest.title, Double.valueOf(rowDataRequest.value));
                         break;
                     case DataType.TEXT:
-                        contentValues.put(rowDataRequest.title, rowDataRequest.value);
+                        String value = rowDataRequest.value;
+
+                        if (value != null && value.startsWith("hex(")) {
+                            String hexString = value.replaceAll("hex\\(|\\)", "");
+                            try {
+                                contentValues.put(rowDataRequest.title, ConverterUtils.decodeHex(hexString));
+                            } catch (Throwable throwable) {
+                                throw new Error("converted hex " + hexString, throwable);
+                            }
+                        } else {
+                            contentValues.put(rowDataRequest.title, value);
+                        }
                         break;
                     default:
                 }
