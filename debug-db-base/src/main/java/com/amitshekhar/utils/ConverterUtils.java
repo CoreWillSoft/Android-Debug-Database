@@ -19,8 +19,6 @@
 
 package com.amitshekhar.utils;
 
-import java.io.UnsupportedEncodingException;
-
 /**
  * Created by amitshekhar on 06/02/17.
  */
@@ -29,23 +27,23 @@ public class ConverterUtils {
 
     private static final int MAX_BLOB_LENGTH = 512;
 
-    private static final String UNKNOWN_BLOB_LABEL = "{blob}";
+    private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
 
     private ConverterUtils() {
         // This class in not publicly instantiable
     }
 
     public static String blobToString(byte[] blob) {
-        if (blob.length <= MAX_BLOB_LENGTH) {
-            if (fastIsAscii(blob)) {
-                try {
-                    return new String(blob, "US-ASCII");
-                } catch (UnsupportedEncodingException ignored) {
-
-                }
-            }
-        }
-        return UNKNOWN_BLOB_LABEL;
+//        if (blob.length <= MAX_BLOB_LENGTH) {
+//            if (fastIsAscii(blob)) {
+//                try {
+//                    return new String(blob, "US-ASCII");
+//                } catch (UnsupportedEncodingException ignored) {
+//
+//                }
+//            }
+//        }
+        return encodeHex(blob);
     }
 
     public static boolean fastIsAscii(byte[] blob) {
@@ -55,6 +53,16 @@ public class ConverterUtils {
             }
         }
         return true;
+    }
+
+    public static String encodeHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for (int i = 0; i < bytes.length; i++) {
+            int v = bytes[i] & 0xFF;
+            hexChars[i * 2] = HEX_ARRAY[v >>> 4];
+            hexChars[i * 2 + 1] = HEX_ARRAY[v & 0x0F];
+        }
+        return new String(hexChars);
     }
 
 }
